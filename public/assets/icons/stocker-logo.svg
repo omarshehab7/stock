@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg"
+     viewBox="120 140 420 320"
+     overflow="visible"
+     role="img"
+     aria-label="Stocker logo">
+
+  <defs>
+    <linearGradient id="y" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#FFD400"/>
+      <stop offset="1" stop-color="#F2B400"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Bars -->
+  <rect x="170" y="260" width="60" height="70" rx="10" fill="url(#y)"/>
+  <rect x="250" y="230" width="60" height="100" rx="10" fill="url(#y)"/>
+  <rect x="330" y="200" width="60" height="130" rx="10" fill="url(#y)"/>
+  <rect x="410" y="160" width="60" height="170" rx="10" fill="url(#y)"/>
+
+  <!-- Text -->
+  <text
+    x="330"
+    y="430"
+    text-anchor="middle"
+    font-family="system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif"
+    font-size="84"
+    font-weight="800"
+    letter-spacing="6"
+    fill="url(#y)">
+    STOCKER
+  </text>
+</svg>

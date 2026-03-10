@@ -6,8 +6,12 @@ import { useForm, SubmitHandler } from 'react-hook-form';
 import SelectField from '@/components/forms/SelectField';
 import {CountrySelectField} from '@/components/forms/CountrySelectField';
 import FooterLink from '@/components/forms/FooterLink';
+import { signUpWithEmail } from '@/lib/actions/auth.actions';
+import { useRouter } from 'next/navigation';
+import { toast } from 'sonner';
 const Signup = () => {
-   const {
+   const router = useRouter();
+    const {
     register,
     handleSubmit,
     control,
@@ -25,9 +29,16 @@ const Signup = () => {
   })
    const onSubmit: SubmitHandler<SignUpFormData> = async (data: SignUpFormData) => {
     try {
+        const result = await signUpWithEmail(data);
+        if (result.success){
+            router.push('/')
+        }
         console.log(data)
     } catch (error) {
         console.error(error);
+        toast.error('Sign up failed. Please try again.', {
+            description: error instanceof Error ? error.message : 'An unexpected error occurred.',
+        });
     }
    }
     return (
@@ -37,7 +48,7 @@ const Signup = () => {
     </h1>
     <form onSubmit={handleSubmit(onSubmit)} className='space-y-5'>
         <InputField
-            name="fullname" 
+            name="fullName" 
             label="Full Name" 
             placeholder="John Doe" 
             register={register} 

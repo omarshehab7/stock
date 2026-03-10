@@ -31,6 +31,8 @@ catch(error){
     throw error;
 }
     console.log(`MongoDB connected ${process.env.NODE_ENV} - ${MONGODB_URI}`);
+
+  return cached.conn;
 };
 
 //Next.js reruns the app in each change in development mode and with out caching there would be multiple duplicate connections
