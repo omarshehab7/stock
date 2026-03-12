@@ -7,9 +7,9 @@ import SelectField from "@/components/forms/SelectField";
 import {INVESTMENT_GOALS, PREFERRED_INDUSTRIES, RISK_TOLERANCE_OPTIONS} from "@/lib/constants";
 import {CountrySelectField} from "@/components/forms/CountrySelectField";
 import FooterLink from "@/components/forms/FooterLink";
-import {signUpWithEmail} from "@/lib/actions/auth.actions";
 import {useRouter} from "next/navigation";
 import {toast} from "sonner";
+import { authClient } from "@/lib/betterauth/client";
 
 const SignUp = () => {
     const router = useRouter()
@@ -33,10 +33,34 @@ const SignUp = () => {
 
     const onSubmit = async (data: SignUpFormData) => {
         try {
-            const result = await signUpWithEmail(data);
-            if(result.success) router.push('/');
+            console.log("Submitting sign up request to better-auth...", data);
+            
+            const response = await authClient.signUp.email({ 
+                email: data.email, 
+                password: data.password, 
+                name: data.fullName,
+            }, {
+                onRequest: () => {
+                    console.log("Request starting");
+                    toast.loading('Creating account...');
+                },
+                onSuccess: (response) => {
+                    console.log("Sign up succeeded", response);
+                    toast.dismiss();
+                    toast.success('Account created successfully');
+                    router.push('/');
+                },
+                onError: (ctx) => {
+                    console.error("Sign up error context", ctx);
+                    toast.dismiss();
+                    toast.error(ctx.error.message || 'Failed to create an account.');
+                }
+            });
+
+            console.log("BetterAuth response object:", response);
+            
         } catch (e) {
-            console.error(e);
+            console.error("Unexpected error caught during sign up:", e);
             toast.error('Sign up failed', {
                 description: e instanceof Error ? e.message : 'Failed to create an account.'
             })
@@ -63,7 +87,13 @@ const SignUp = () => {
                     placeholder="contact@jsmastery.com"
                     register={register}
                     error={errors.email}
-                    validation={{ required: 'Email name is required', pattern: /^\w+@\w+\.\w+$/, message: 'Email address is required' }}
+                    validation={{ 
+                        required: 'Email is required', 
+                        pattern: {
+                            value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                            message: 'Email address is invalid'
+                        }
+                    }}
                 />
 
                 <InputField
@@ -73,7 +103,13 @@ const SignUp = () => {
                     type="password"
                     register={register}
                     error={errors.password}
-                    validation={{ required: 'Password is required', minLength: 8 }}
+                    validation={{ 
+                        required: 'Password is required', 
+                        minLength: {
+                            value: 8,
+                            message: 'Password must be at least 8 characters'
+                        }
+                    }}
                 />
 
                 <CountrySelectField
